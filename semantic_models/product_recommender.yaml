@@ -5,7 +5,7 @@ tables:
   - name: recommendations
     description: Final personalized product recommendations per member
     base_table:
-      database: WESFARMERS_API_RECOMMENDER
+      database: WESFARMERS_HEALTH_RECOMMENDER
       schema: ML
       table: FINAL_RECOMMENDATIONS
     dimensions:
@@ -94,7 +94,7 @@ tables:
   - name: member_features
     description: Member profiles with purchase behavior and preferences
     base_table:
-      database: WESFARMERS_API_RECOMMENDER
+      database: WESFARMERS_HEALTH_RECOMMENDER
       schema: FEATURES
       table: MEMBER_FEATURES
     dimensions:
@@ -159,7 +159,7 @@ tables:
   - name: product_features
     description: Product catalog with performance metrics
     base_table:
-      database: WESFARMERS_API_RECOMMENDER
+      database: WESFARMERS_HEALTH_RECOMMENDER
       schema: FEATURES
       table: PRODUCT_FEATURES
     dimensions:
@@ -230,7 +230,7 @@ verified_queries:
     verified_by: demo
     sql: |
       SELECT category, COUNT(*) as recommendation_count
-      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      FROM WESFARMERS_HEALTH_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
       GROUP BY category ORDER BY recommendation_count DESC LIMIT 10
 
   - name: recommendations_by_tier
@@ -239,7 +239,7 @@ verified_queries:
     verified_by: demo
     sql: |
       SELECT membership_tier, COUNT(*) as recommendations, COUNT(DISTINCT member_id) as members
-      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      FROM WESFARMERS_HEALTH_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
       GROUP BY membership_tier
 
   - name: top_recommended_brands
@@ -248,7 +248,7 @@ verified_queries:
     verified_by: demo
     sql: |
       SELECT brand, COUNT(*) as recommendation_count, AVG(final_score) as avg_score
-      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      FROM WESFARMERS_HEALTH_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
       GROUP BY brand ORDER BY recommendation_count DESC LIMIT 10
 
   - name: algorithm_performance
@@ -257,5 +257,5 @@ verified_queries:
     verified_by: demo
     sql: |
       SELECT recommendation_types, COUNT(*) as count, AVG(final_score) as avg_score
-      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      FROM WESFARMERS_HEALTH_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
       GROUP BY recommendation_types

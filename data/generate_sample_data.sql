@@ -12,7 +12,7 @@
 -- =============================================================================
 
 USE ROLE ACCOUNTADMIN;
-USE DATABASE WESFARMERS_API_RECOMMENDER;
+USE DATABASE WESFARMERS_HEALTH_RECOMMENDER;
 USE WAREHOUSE API_RECOMMENDER_WH;
 
 -- =============================================================================

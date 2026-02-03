@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    database: WESFARMERS_API_RECOMMENDER
+    database: WESFARMERS_HEALTH_RECOMMENDER
     schema: RAW
     tables:
       - name: raw_members

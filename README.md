@@ -1,7 +1,7 @@
 # Product Recommender PoC
 
 **Division**: Australian Pharmaceutical Industries (API/Priceline)  
-**Database**: `WESFARMERS_API_RECOMMENDER`  
+**Database**: `WESFARMERS_HEALTH_RECOMMENDER`  
 **Status**: ✅ Production Ready
 
 ## Overview
