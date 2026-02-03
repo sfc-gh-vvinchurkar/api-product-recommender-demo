@@ -1,0 +1,261 @@
+name: product_recommender
+description: Product Recommendation Analytics for Sister Club members - personalized recommendations based on purchase history, preferences, and similar member behavior
+
+tables:
+  - name: recommendations
+    description: Final personalized product recommendations per member
+    base_table:
+      database: WESFARMERS_API_RECOMMENDER
+      schema: ML
+      table: FINAL_RECOMMENDATIONS
+    dimensions:
+      - name: member_id
+        expr: member_id
+        description: Member identifier
+        data_type: VARCHAR
+      - name: product_id
+        expr: product_id
+        description: Recommended product
+        data_type: VARCHAR
+      - name: product_name
+        expr: product_name
+        description: Product name
+        synonyms: [item, product]
+        data_type: VARCHAR
+      - name: brand
+        expr: brand
+        description: Product brand
+        data_type: VARCHAR
+      - name: category
+        expr: category
+        description: Product category
+        synonyms: [department]
+        data_type: VARCHAR
+      - name: subcategory
+        expr: subcategory
+        description: Product subcategory
+        data_type: VARCHAR
+      - name: recommendation_types
+        expr: recommendation_types
+        description: Algorithm used (Content-Based, Collaborative, or both)
+        synonyms: [algorithm, method]
+        data_type: VARCHAR
+      - name: member_generation
+        expr: member_generation
+        description: Member generation (Gen Z, Millennial, Gen X, Boomer)
+        data_type: VARCHAR
+      - name: member_gender
+        expr: member_gender
+        description: Member gender
+        data_type: VARCHAR
+      - name: membership_tier
+        expr: membership_tier
+        description: Bronze, Silver, Gold, Platinum
+        data_type: VARCHAR
+      - name: member_skin_type
+        expr: member_skin_type
+        description: Member skin type preference
+        data_type: VARCHAR
+      - name: price_sensitivity
+        expr: price_sensitivity
+        description: Budget, Value, Premium
+        data_type: VARCHAR
+      - name: is_bestseller
+        expr: is_bestseller
+        description: Product is a bestseller
+        data_type: BOOLEAN
+      - name: is_trending
+        expr: is_trending
+        description: Product is trending
+        data_type: BOOLEAN
+      - name: final_rank
+        expr: final_rank
+        description: Recommendation rank (1 = top recommendation)
+        synonyms: [rank, position]
+        data_type: NUMBER
+    measures:
+      - name: recommendation_count
+        expr: COUNT(*)
+        description: Number of recommendations
+        data_type: NUMBER
+      - name: avg_score
+        expr: AVG(final_score)
+        description: Average recommendation score
+        data_type: NUMBER
+      - name: avg_price
+        expr: AVG(unit_price)
+        description: Average recommended product price
+        data_type: NUMBER
+      - name: avg_rating
+        expr: AVG(avg_rating)
+        description: Average product rating
+        data_type: NUMBER
+
+  - name: member_features
+    description: Member profiles with purchase behavior and preferences
+    base_table:
+      database: WESFARMERS_API_RECOMMENDER
+      schema: FEATURES
+      table: MEMBER_FEATURES
+    dimensions:
+      - name: member_id
+        expr: member_id
+        description: Member identifier
+        unique: true
+        data_type: VARCHAR
+      - name: generation
+        expr: generation
+        description: Generation cohort
+        synonyms: [age group]
+        data_type: VARCHAR
+      - name: gender
+        expr: gender
+        description: Gender
+        data_type: VARCHAR
+      - name: membership_tier
+        expr: membership_tier
+        description: Loyalty tier
+        data_type: VARCHAR
+      - name: skin_type
+        expr: skin_type
+        description: Skin type
+        data_type: VARCHAR
+      - name: hair_type
+        expr: hair_type
+        description: Hair type
+        data_type: VARCHAR
+      - name: health_interests
+        expr: health_interests
+        description: Health focus areas
+        data_type: VARCHAR
+      - name: price_sensitivity
+        expr: price_sensitivity
+        description: Price segment
+        data_type: VARCHAR
+      - name: top_category_1
+        expr: top_category_1
+        description: Favorite category
+        synonyms: [preferred category]
+        data_type: VARCHAR
+      - name: top_brand_1
+        expr: top_brand_1
+        description: Favorite brand
+        synonyms: [preferred brand]
+        data_type: VARCHAR
+    measures:
+      - name: member_count
+        expr: COUNT(DISTINCT member_id)
+        description: Number of members
+        data_type: NUMBER
+      - name: avg_total_spend
+        expr: AVG(total_spend)
+        description: Average lifetime spend
+        data_type: NUMBER
+      - name: avg_purchases
+        expr: AVG(total_purchases)
+        description: Average purchase count
+        data_type: NUMBER
+
+  - name: product_features
+    description: Product catalog with performance metrics
+    base_table:
+      database: WESFARMERS_API_RECOMMENDER
+      schema: FEATURES
+      table: PRODUCT_FEATURES
+    dimensions:
+      - name: product_id
+        expr: product_id
+        description: Product identifier
+        unique: true
+        data_type: VARCHAR
+      - name: product_name
+        expr: product_name
+        description: Product name
+        synonyms: [item]
+        data_type: VARCHAR
+      - name: brand
+        expr: brand
+        description: Brand name
+        data_type: VARCHAR
+      - name: category
+        expr: category
+        description: Product category
+        data_type: VARCHAR
+      - name: subcategory
+        expr: subcategory
+        description: Product subcategory
+        data_type: VARCHAR
+      - name: skin_concern
+        expr: skin_concern
+        description: Target skin concern
+        data_type: VARCHAR
+      - name: health_category
+        expr: health_category
+        description: Health category
+        data_type: VARCHAR
+      - name: is_bestseller
+        expr: is_bestseller
+        description: Bestseller flag
+        data_type: BOOLEAN
+      - name: is_trending
+        expr: is_trending
+        description: Trending flag
+        data_type: BOOLEAN
+    measures:
+      - name: product_count
+        expr: COUNT(DISTINCT product_id)
+        description: Number of products
+        data_type: NUMBER
+      - name: total_revenue
+        expr: SUM(total_revenue)
+        description: Total revenue
+        data_type: NUMBER
+      - name: avg_rating
+        expr: AVG(avg_rating)
+        description: Average rating
+        data_type: NUMBER
+      - name: total_purchases
+        expr: SUM(total_purchases)
+        description: Total purchase count
+        data_type: NUMBER
+      - name: avg_conversion
+        expr: AVG(view_to_purchase_rate)
+        description: Average view-to-purchase rate
+        data_type: NUMBER
+
+verified_queries:
+  - name: top_recommended_categories
+    question: What categories are most recommended?
+    verified_at: 1706918400
+    verified_by: demo
+    sql: |
+      SELECT category, COUNT(*) as recommendation_count
+      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      GROUP BY category ORDER BY recommendation_count DESC LIMIT 10
+
+  - name: recommendations_by_tier
+    question: How many recommendations per membership tier?
+    verified_at: 1706918400
+    verified_by: demo
+    sql: |
+      SELECT membership_tier, COUNT(*) as recommendations, COUNT(DISTINCT member_id) as members
+      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      GROUP BY membership_tier
+
+  - name: top_recommended_brands
+    question: What are the top recommended brands?
+    verified_at: 1706918400
+    verified_by: demo
+    sql: |
+      SELECT brand, COUNT(*) as recommendation_count, AVG(final_score) as avg_score
+      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      GROUP BY brand ORDER BY recommendation_count DESC LIMIT 10
+
+  - name: algorithm_performance
+    question: Which recommendation algorithm is used most?
+    verified_at: 1706918400
+    verified_by: demo
+    sql: |
+      SELECT recommendation_types, COUNT(*) as count, AVG(final_score) as avg_score
+      FROM WESFARMERS_API_RECOMMENDER.ML.FINAL_RECOMMENDATIONS
+      GROUP BY recommendation_types
